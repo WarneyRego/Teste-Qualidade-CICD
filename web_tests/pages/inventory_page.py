@@ -20,7 +20,10 @@ class InventoryPage:
         normalized = item_name.lower().replace(" ", "-").replace("(", "").replace(")", "").replace(".", "")
         btn_id = f"add-to-cart-{normalized}"
         btn = self.wait.until(EC.element_to_be_clickable((By.ID, btn_id)))
+        current_count = self.get_cart_item_count()
         btn.click()
+        # wait until badge reflects the new item
+        self.wait.until(lambda d: self.get_cart_item_count() == current_count + 1)
 
     def get_cart_item_count(self) -> int:
         elements = self.driver.find_elements(*self._CART_BADGE)
