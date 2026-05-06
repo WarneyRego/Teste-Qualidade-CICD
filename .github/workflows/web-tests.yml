@@ -32,7 +32,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Web tests
-        run: pytest web_tests/ -v --html=reports/web-report.html --css=reports/custom.css --self-contained-html
+        run: pytest web_tests/ -v -p reporter --custom-html=reports/web-report.html --custom-html-title="Web Tests — SauceDemo"
 
       - name: Upload HTML report
         if: always()

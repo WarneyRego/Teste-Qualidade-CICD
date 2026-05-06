@@ -25,7 +25,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run API tests
-        run: pytest api_tests/ -v --html=reports/api-report.html --css=reports/custom.css --self-contained-html
+        run: pytest api_tests/ -v -p reporter --custom-html=reports/api-report.html --custom-html-title="API Tests — Petstore"
 
       - name: Upload HTML report
         if: always()
