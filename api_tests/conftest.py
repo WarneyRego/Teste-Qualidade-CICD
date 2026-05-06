@@ -1,11 +1,25 @@
 import pytest
 import requests
+from datetime import datetime
 
 from api_tests.services.pet_service import PetService
 from api_tests.services.store_service import StoreService
 from api_tests.services.user_service import UserService
 
 BASE_URL = "https://petstore.swagger.io/v2"
+
+
+def pytest_html_report_title(report):
+    report.title = "API Tests — Petstore"
+
+
+def pytest_configure(config):
+    config._metadata = {
+        "Projeto": "Automação de Testes — Qualidade & CI/CD",
+        "Suite": "API Tests · Swagger Petstore",
+        "Base URL": BASE_URL,
+        "Gerado em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+    }
 
 
 @pytest.fixture(scope="session")

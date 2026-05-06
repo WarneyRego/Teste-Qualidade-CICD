@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #080b10;
+  --surface:   #0d1117;
+  --card:      #111820;
+  --border:    #1e2d3d;
+  --accent:    #00e5ff;
+  --pass:      #39ff9a;
+  --fail:      #ff4757;
+  --warn:      #ffd32a;
+  --skip:      #778ca3;
+  --text:      #cdd9e5;
+  --muted:     #4d6173;
+  --heading:   #e6edf3;
+  --glow-pass: 0 0 12px rgba(57,255,154,.35);
+  --glow-fail: 0 0 12px rgba(255,71,87,.35);
+  --glow-acc:  0 0 16px rgba(0,229,255,.25);
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,.07), transparent),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,45,61,.35) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,45,61,.2) 40px);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── Typography ───────────────────────────────────────────────── */
+h1, h2, h3 { font-family: 'Syne', sans-serif; color: var(--heading); }
+
+h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+#head {
+  background: linear-gradient(135deg, #0d1117 0%, #0a1628 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+#head::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 0% 50%, rgba(0,229,255,.06), transparent);
+  pointer-events: none;
+}
+
+#head::after {
+  content: 'TEST REPORT';
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 800;
+  color: rgba(0,229,255,.04);
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+#head h1 {
+  background: linear-gradient(120deg, var(--accent) 0%, #7efff5 50%, var(--heading) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  z-index: 1;
+  margin-bottom: .3rem;
+}
+
+#head p { color: var(--muted); font-size: .75rem; position: relative; z-index: 1; }
+
+/* ── Environment / Metadata table ────────────────────────────── */
+#environment {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 1.8rem 2.5rem;
+  overflow: hidden;
+}
+
+#environment h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: .9rem 1.4rem .6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+#environment table { width: 100%; border-collapse: collapse; }
+
+#environment tr { border-bottom: 1px solid rgba(30,45,61,.6); }
+#environment tr:last-child { border-bottom: none; }
+
+#environment td {
+  padding: .55rem 1.4rem;
+  font-size: .72rem;
+}
+
+#environment td:first-child {
+  color: var(--muted);
+  width: 30%;
+  font-weight: 500;
+}
+
+#environment td:last-child { color: var(--text); }
+
+/* ── Summary / Stats bar ──────────────────────────────────────── */
+#summary { padding: 0 2.5rem 1.5rem; }
+
+#summary h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+/* pill badges next to the summary heading */
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .7rem;
+  font-weight: 600;
+  padding: .25rem .75rem;
+  border-radius: 999px;
+  margin-right: .4rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Results Table ────────────────────────────────────────────── */
+#results-table {
+  margin: 0 2.5rem 2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+#results-table h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: .9rem 1.4rem .6rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+#results-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+}
+
+#results-table thead tr {
+  background: var(--card);
+  border-bottom: 2px solid var(--border);
+}
+
+#results-table th {
+  padding: .75rem 1.1rem;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+}
+
+#results-table td {
+  padding: .65rem 1.1rem;
+  font-size: .75rem;
+  border-bottom: 1px solid rgba(30,45,61,.5);
+  vertical-align: middle;
+}
+
+#results-table tr:last-child td { border-bottom: none; }
+
+#results-table tbody tr {
+  transition: background .15s ease;
+}
+
+#results-table tbody tr:hover {
+  background: rgba(0,229,255,.03);
+}
+
+/* ── Result Badges (passed / failed / etc) ───────────────────── */
+.passed, .col-result span { color: var(--pass); }
+.failed { color: var(--fail); }
+.error  { color: var(--fail); }
+.skipped { color: var(--skip); }
+.xfailed { color: var(--warn); }
+
+.col-result {
+  white-space: nowrap;
+}
+
+.col-result span {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .2rem .7rem;
+  border-radius: 4px;
+}
+
+tr.passed .col-result span {
+  color: var(--pass);
+  background: rgba(57,255,154,.08);
+  border: 1px solid rgba(57,255,154,.2);
+  box-shadow: var(--glow-pass);
+}
+
+tr.failed .col-result span,
+tr.error  .col-result span {
+  color: var(--fail);
+  background: rgba(255,71,87,.08);
+  border: 1px solid rgba(255,71,87,.2);
+  box-shadow: var(--glow-fail);
+}
+
+tr.skipped .col-result span {
+  color: var(--skip);
+  background: rgba(119,140,163,.08);
+  border: 1px solid rgba(119,140,163,.2);
+}
+
+/* ── Test name column ─────────────────────────────────────────── */
+.col-name { color: var(--heading); font-weight: 500; }
+.col-name a { color: inherit; text-decoration: none; }
+.col-name a:hover { color: var(--accent); text-decoration: underline; }
+
+/* ── Duration column ──────────────────────────────────────────── */
+.col-duration { color: var(--muted); font-size: .72rem; }
+
+/* ── Links / extras ───────────────────────────────────────────── */
+a { color: var(--accent); }
+a:hover { color: #7efff5; }
+
+/* ── Collapsible log sections ─────────────────────────────────── */
+.log {
+  background: #060a0f;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .8rem 1rem;
+  font-size: .72rem;
+  color: #8899a8;
+  overflow-x: auto;
+  margin-top: .5rem;
+  line-height: 1.6;
+}
+
+/* ── Filters bar ──────────────────────────────────────────────── */
+#filter-container {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  padding: 0 2.5rem 1.4rem;
+}
+
+.filter {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  padding: .3rem .8rem;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+
+.filter:hover, .filter.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Misc cleanup ─────────────────────────────────────────────── */
+#not-found-message { color: var(--muted); padding: 2rem 2.5rem; font-size: .85rem; }
+
+p.run-count {
+  font-size: .75rem;
+  color: var(--muted);
+  padding: .2rem 2.5rem .5rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  #head, #environment, #summary, #results-table, #filter-container, p.run-count {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  #head::after { display: none; }
+}
