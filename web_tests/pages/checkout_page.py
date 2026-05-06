@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -30,7 +31,7 @@ class CheckoutPage:
         postal.clear()
         postal.send_keys(postal_code)
         btn = self.wait.until(EC.element_to_be_clickable(self._CONTINUE_BTN))
-        self.driver.execute_script("arguments[0].click();", btn)
+        ActionChains(self.driver).move_to_element(btn).click().perform()
         self.wait.until(EC.url_contains("checkout-step-two"))
 
     def get_item_total_label(self) -> str:
