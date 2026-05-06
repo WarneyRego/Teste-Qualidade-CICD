@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 
 
 class CheckoutPage:
@@ -35,14 +34,9 @@ class CheckoutPage:
         self._set_input(self._FIRST_NAME, first_name)
         self._set_input(self._LAST_NAME, last_name)
         self._set_input(self._POSTAL_CODE, postal_code)
-        self.wait.until(EC.element_to_be_clickable(self._CONTINUE_BTN)).click()
-        try:
-            self.wait.until(EC.url_contains("checkout-step-two"))
-        except TimeoutException:
-            errors = self.driver.find_elements(By.CSS_SELECTOR, "[data-test='error']")
-            print(f"[DEBUG] URL após click: {self.driver.current_url}")
-            print(f"[DEBUG] Erro no form: {errors[0].text if errors else 'nenhum'}")
-            raise
+        btn = self.wait.until(EC.element_to_be_clickable(self._CONTINUE_BTN))
+        self.driver.execute_script("arguments[0].form.requestSubmit(arguments[0]);", btn)
+        self.wait.until(EC.url_contains("checkout-step-two"))
 
     def get_item_total_label(self) -> str:
         return self.wait.until(EC.presence_of_element_located(self._ITEM_TOTAL_LABEL)).text
