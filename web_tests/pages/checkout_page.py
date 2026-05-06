@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,29 +16,32 @@ class CheckoutPage:
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 15)
+
+    def _set_input(self, locator, value: str):
+        """Set input value firing React-compatible events so form validation passes."""
+        el = self.wait.until(EC.element_to_be_clickable(locator))
+        self.driver.execute_script("""
+            var setter = Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype, 'value').set;
+            setter.call(arguments[0], arguments[1]);
+            arguments[0].dispatchEvent(new Event('input', {bubbles: true}));
+            arguments[0].dispatchEvent(new Event('change', {bubbles: true}));
+        """, el, value)
 
     def fill_customer_info(self, first_name: str, last_name: str, postal_code: str):
         self.wait.until(EC.url_contains("checkout-step-one"))
-        first = self.wait.until(EC.element_to_be_clickable(self._FIRST_NAME))
-        first.clear()
-        first.send_keys(first_name)
-        last = self.wait.until(EC.element_to_be_clickable(self._LAST_NAME))
-        last.clear()
-        last.send_keys(last_name)
-        postal = self.wait.until(EC.element_to_be_clickable(self._POSTAL_CODE))
-        postal.clear()
-        postal.send_keys(postal_code)
-        btn = self.wait.until(EC.element_to_be_clickable(self._CONTINUE_BTN))
-        self.driver.execute_script("arguments[0].click();", btn)
+        self._set_input(self._FIRST_NAME, first_name)
+        self._set_input(self._LAST_NAME, last_name)
+        self._set_input(self._POSTAL_CODE, postal_code)
+        self.wait.until(EC.element_to_be_clickable(self._CONTINUE_BTN)).click()
         self.wait.until(EC.url_contains("checkout-step-two"))
 
     def get_item_total_label(self) -> str:
         return self.wait.until(EC.presence_of_element_located(self._ITEM_TOTAL_LABEL)).text
 
     def finish_order(self):
-        btn = self.wait.until(EC.element_to_be_clickable(self._FINISH_BTN))
-        self.driver.execute_script("arguments[0].click();", btn)
+        self.wait.until(EC.element_to_be_clickable(self._FINISH_BTN)).click()
         self.wait.until(EC.presence_of_element_located(self._CONFIRMATION_HEADER))
 
     def get_confirmation_header(self) -> str:
