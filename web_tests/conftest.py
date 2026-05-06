@@ -16,10 +16,15 @@ def driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--disable-gpu")
+    # disable Chrome password manager popups that can block test interactions
+    options.add_argument("--disable-features=PasswordCheck,SafeBrowsingEnhancedProtection")
+    options.add_experimental_option("prefs", {
+        "credentials_enable_service": False,
+        "profile.password_manager_enabled": False,
+    })
 
     service = Service(ChromeDriverManager().install())
     chrome = webdriver.Chrome(service=service, options=options)
-    chrome.implicitly_wait(10)
 
     yield chrome
 

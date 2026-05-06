@@ -19,10 +19,17 @@ class CheckoutPage:
         self.wait = WebDriverWait(driver, 10)
 
     def fill_customer_info(self, first_name: str, last_name: str, postal_code: str):
-        self.wait.until(EC.presence_of_element_located(self._FIRST_NAME)).send_keys(first_name)
-        self.driver.find_element(*self._LAST_NAME).send_keys(last_name)
-        self.driver.find_element(*self._POSTAL_CODE).send_keys(postal_code)
-        btn = self.driver.find_element(*self._CONTINUE_BTN)
+        self.wait.until(EC.url_contains("checkout-step-one"))
+        first = self.wait.until(EC.element_to_be_clickable(self._FIRST_NAME))
+        first.clear()
+        first.send_keys(first_name)
+        last = self.wait.until(EC.element_to_be_clickable(self._LAST_NAME))
+        last.clear()
+        last.send_keys(last_name)
+        postal = self.wait.until(EC.element_to_be_clickable(self._POSTAL_CODE))
+        postal.clear()
+        postal.send_keys(postal_code)
+        btn = self.wait.until(EC.element_to_be_clickable(self._CONTINUE_BTN))
         self.driver.execute_script("arguments[0].click();", btn)
         self.wait.until(EC.url_contains("checkout-step-two"))
 
