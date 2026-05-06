@@ -21,6 +21,7 @@ class TestReport:
             "nodeid": report.nodeid,
             "outcome": report.outcome,
             "duration": getattr(report, "duration", 0),
+            "stdout": getattr(report, "capstdout", "") or "",
             "longrepr": str(report.longrepr) if report.failed else "",
         })
 
@@ -41,16 +42,28 @@ class TestReport:
             parts = r["nodeid"].split("::")
             module = parts[0].replace("\\", "/")
             test   = "::".join(parts[1:]) if len(parts) > 1 else module
+
+            log_html = ""
+            stdout = r.get("stdout", "").strip()
+            longrepr = r.get("longrepr", "").strip()
+
+            if stdout:
+                safe_out = stdout.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
+                log_html += f'<div class="log-section"><div class="log-label">📋 Logs</div><pre class="log-output">{safe_out}</pre></div>'
+            if longrepr:
+                safe_err = longrepr.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
+                log_html += f'<div class="log-section"><div class="log-label">❌ Traceback</div><pre class="traceback">{safe_err}</pre></div>'
+
             detail = ""
-            if r["longrepr"]:
-                safe = r["longrepr"].replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
-                detail = f'<tr class="detail-row" id="detail-{i}"><td colspan="4"><pre class="traceback">{safe}</pre></td></tr>'
+            if log_html:
+                detail = f'<tr class="detail-row" id="detail-{i}"><td colspan="4"><div class="detail-wrap">{log_html}</div></td></tr>'
+
             rows += f"""
             <tr class="result-row {cls}" onclick="toggle({i})">
               <td class="col-badge"><span class="badge {cls}">{badge}</span></td>
               <td class="col-module">{module}</td>
               <td class="col-test">{test}</td>
-              <td class="col-dur">{dur}</td>
+              <td class="col-dur">{dur} <span class="expand-hint">{'▼' if log_html else ''}</span></td>
             </tr>{detail}"""
 
         html = f"""<!DOCTYPE html>
@@ -327,19 +340,59 @@ td.col-dur    {{ color: var(--muted); font-size: .7rem; white-space: nowrap; tex
 .result-row.failed td:first-child {{ border-left: 3px solid var(--fail); }}
 .result-row.skipped td:first-child {{ border-left: 3px solid var(--skip); }}
 
+.expand-hint {{
+  color: var(--muted);
+  font-size: .65rem;
+  margin-left: .3rem;
+  opacity: .6;
+}}
+
 .detail-row {{ display: none; }}
 .detail-row td {{ padding: 0 !important; }}
+
+.detail-wrap {{
+  border-top: 1px solid var(--border2);
+  background: #040609;
+}}
+
+.log-section {{ border-bottom: 1px solid var(--border); }}
+.log-section:last-child {{ border-bottom: none; }}
+
+.log-label {{
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: .5rem 1.2rem .3rem;
+  background: rgba(255,255,255,.02);
+  border-bottom: 1px solid var(--border);
+}}
+
+.log-output {{
+  color: #7eb8d4;
+  font-family: var(--mono);
+  font-size: .72rem;
+  line-height: 1.65;
+  overflow-x: auto;
+  padding: .8rem 1.4rem 1rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  margin: 0;
+}}
+
 .traceback {{
-  background: #020406;
-  border-top: 1px solid var(--fail-b);
-  color: #e57373;
+  background: transparent;
+  color: #e07070;
   font-family: var(--mono);
   font-size: .7rem;
   line-height: 1.6;
   overflow-x: auto;
-  padding: 1rem 1.2rem;
+  padding: .8rem 1.4rem 1rem;
   white-space: pre-wrap;
   word-break: break-all;
+  margin: 0;
 }}
 
 /* hide rows by filter */

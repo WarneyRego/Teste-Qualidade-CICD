@@ -1,5 +1,3 @@
-import pytest
-
 from web_tests.pages.login_page import LoginPage
 from web_tests.pages.inventory_page import InventoryPage
 from web_tests.pages.cart_page import CartPage
@@ -15,42 +13,58 @@ ITEMS_TO_BUY = [
 
 
 def test_complete_purchase_flow(driver):
-    # --- Login ---
+    # Login
+    print(f"[1] Abrindo https://www.saucedemo.com")
     login_page = LoginPage(driver)
     login_page.open()
+
+    print(f"[2] Realizando login com usuário '{USERNAME}'")
     login_page.login(USERNAME, PASSWORD)
 
     inventory_page = InventoryPage(driver)
-    assert inventory_page.get_page_title() == "Products"
+    title = inventory_page.get_page_title()
+    print(f"[3] Página carregada: '{title}'")
+    assert title == "Products"
 
-    # --- Add two items to the cart ---
+    # Adicionar produtos
     for item in ITEMS_TO_BUY:
         inventory_page.add_item_to_cart(item)
+        print(f"[4] Produto adicionado ao carrinho: '{item}'")
 
-    assert inventory_page.get_cart_item_count() == len(ITEMS_TO_BUY)
+    count = inventory_page.get_cart_item_count()
+    print(f"[5] Itens no carrinho: {count}")
+    assert count == len(ITEMS_TO_BUY)
 
-    # --- Navigate to cart and verify contents ---
+    # Ir ao carrinho
+    print(f"[6] Navegando para o carrinho")
     inventory_page.go_to_cart()
 
     cart_page = CartPage(driver)
+    cart_items = cart_page.get_item_names()
+    print(f"[7] Itens encontrados no carrinho: {cart_items}")
     assert cart_page.get_item_count() == len(ITEMS_TO_BUY)
-
-    cart_item_names = cart_page.get_item_names()
     for item in ITEMS_TO_BUY:
-        assert item in cart_item_names
+        assert item in cart_items
 
-    # --- Proceed to checkout ---
+    # Checkout
+    print(f"[8] Iniciando checkout")
     cart_page.proceed_to_checkout()
 
     checkout_page = CheckoutPage(driver)
+    print(f"[9] Preenchendo dados do cliente: John Doe, CEP 12345")
     checkout_page.fill_customer_info("John", "Doe", "12345")
 
-    # Verify the order summary shows a subtotal before finishing
-    item_total = checkout_page.get_item_total_label()
-    assert "Item total:" in item_total
+    total_label = checkout_page.get_item_total_label()
+    print(f"[10] Resumo do pedido: '{total_label}'")
+    assert "Item total:" in total_label
 
-    # --- Complete the purchase ---
+    print(f"[11] Finalizando compra")
     checkout_page.finish_order()
 
-    assert checkout_page.get_confirmation_header() == "Thank you for your order!"
-    assert "dispatched" in checkout_page.get_confirmation_text().lower()
+    header = checkout_page.get_confirmation_header()
+    text   = checkout_page.get_confirmation_text()
+    print(f"[12] Confirmação: '{header}'")
+    print(f"[13] Mensagem: '{text}'")
+
+    assert header == "Thank you for your order!"
+    assert "dispatched" in text.lower()
