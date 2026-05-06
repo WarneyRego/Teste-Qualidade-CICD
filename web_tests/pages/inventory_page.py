@@ -19,10 +19,10 @@ class InventoryPage:
     def add_item_to_cart(self, item_name: str):
         normalized = item_name.lower().replace(" ", "-").replace("(", "").replace(")", "").replace(".", "")
         btn_id = f"add-to-cart-{normalized}"
-        btn = self.wait.until(EC.element_to_be_clickable((By.ID, btn_id)))
+        btn = self.wait.until(EC.presence_of_element_located((By.ID, btn_id)))
         current_count = self.get_cart_item_count()
-        btn.click()
-        # wait until badge reflects the new item
+        # JS click is more reliable in headless environments
+        self.driver.execute_script("arguments[0].click();", btn)
         self.wait.until(lambda d: self.get_cart_item_count() == current_count + 1)
 
     def get_cart_item_count(self) -> int:
@@ -32,4 +32,6 @@ class InventoryPage:
         return int(elements[0].text)
 
     def go_to_cart(self):
-        self.driver.find_element(*self._CART_LINK).click()
+        link = self.wait.until(EC.presence_of_element_located(self._CART_LINK))
+        self.driver.execute_script("arguments[0].click();", link)
+        self.wait.until(EC.url_contains("cart"))
