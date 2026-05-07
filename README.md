@@ -1,143 +1,226 @@
-# Teste Qualidade — CI/CD
+<div align="center">
 
-Projeto de automação de testes com duas suítes independentes: testes de API REST e testes Web E2E, integradas a pipelines de CI/CD no GitHub Actions.
+# 🧪 Teste Qualidade — CI/CD
 
----
+**Automação de testes completa com API REST + Web E2E, integrada a pipelines de CI/CD no GitHub Actions.**
 
-## Visao Geral
+[![API Tests](https://github.com/WarneyRego/Teste-Qualidade-CICD/actions/workflows/api-tests.yml/badge.svg)](https://github.com/WarneyRego/Teste-Qualidade-CICD/actions/workflows/api-tests.yml)
+[![Web Tests](https://github.com/WarneyRego/Teste-Qualidade-CICD/actions/workflows/web-tests.yml/badge.svg)](https://github.com/WarneyRego/Teste-Qualidade-CICD/actions/workflows/web-tests.yml)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![Selenium](https://img.shields.io/badge/Selenium-4.27-43B02A?logo=selenium&logoColor=white)
+![pytest](https://img.shields.io/badge/pytest-8.3.5-0A9EDC?logo=pytest&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-| Suite | Alvo | Framework |
-|-------|------|-----------|
-| API   | [Petstore Swagger](https://petstore.swagger.io/v2) | pytest + requests |
-| Web   | [SauceDemo](https://www.saucedemo.com/) | pytest + Selenium |
-
-Os testes de API cobrem os recursos **Pet**, **Store** e **User** da API Petstore, incluindo cenários de criação, leitura, atualização e exclusão.
-
-O teste Web executa um fluxo E2E completo: login → adição de produtos ao carrinho → checkout → confirmação de compra.
+</div>
 
 ---
 
-## Tecnologias
+## 📋 Visão Geral
 
-- **Python 3.11**
-- **pytest 8.3.5** — runner e framework de asserções
-- **requests 2.32.3** — cliente HTTP para testes de API
-- **selenium 4.27.1** — automação de browser
-- **webdriver-manager 4.0.2** — gerenciamento automático do ChromeDriver
-- **pytest-html 4.1.1** — geração de relatórios HTML
+Este projeto implementa **duas suítes de automação independentes**, cada uma com sua própria pipeline de CI/CD:
+
+| Suíte | Alvo | Padrão de Design | Tecnologia |
+|-------|------|-----------------|------------|
+| 🔌 API | [Petstore Swagger](https://petstore.swagger.io/v2) | Service Object | pytest + requests |
+| 🌐 Web | [SauceDemo](https://www.saucedemo.com/) | Page Object Model | pytest + Selenium |
+
+### O que é testado?
+
+**API — Petstore:**
+- `Pet` → criar, buscar por status, buscar por ID, atualizar e deletar pets
+- `Store` → consultar inventário, criar e buscar pedidos
+- `User` → criar, autenticar, buscar, atualizar e deletar usuários
+
+**Web — SauceDemo (E2E):**
+- Login com credenciais válidas
+- Adição de múltiplos produtos ao carrinho
+- Validação dos itens no carrinho
+- Preenchimento de dados e finalização do checkout
+- Confirmação da compra ("Thank you for your order!")
 
 ---
 
-## Estrutura de Pastas
+## 🏗️ Arquitetura do Projeto
 
 ```
-.
-├── api_tests/
-│   ├── services/
-│   │   ├── pet_service.py       # Service Object para /pet
-│   │   ├── store_service.py     # Service Object para /store
-│   │   └── user_service.py      # Service Object para /user
-│   ├── tests/
-│   │   ├── test_pet.py
-│   │   ├── test_store.py
-│   │   └── test_user.py
-│   └── conftest.py              # Fixtures de sessão HTTP
+Teste-Qualidade-CICD/
 │
-├── web_tests/
-│   ├── pages/
-│   │   ├── login_page.py        # Page Object da tela de login
-│   │   ├── inventory_page.py    # Page Object do catálogo de produtos
-│   │   ├── cart_page.py         # Page Object do carrinho
-│   │   └── checkout_page.py     # Page Object do fluxo de checkout
+├── 📂 api_tests/
+│   ├── services/
+│   │   ├── pet_service.py       # Service Object → endpoints /pet
+│   │   ├── store_service.py     # Service Object → endpoints /store
+│   │   └── user_service.py      # Service Object → endpoints /user
 │   ├── tests/
-│   │   └── test_e2e_purchase.py # Teste E2E de compra completa
+│   │   ├── test_pet.py          # Testes CRUD de Pet
+│   │   ├── test_store.py        # Testes de inventário e pedidos
+│   │   └── test_user.py         # Testes de usuário e autenticação
+│   └── conftest.py              # Fixture de sessão HTTP compartilhada
+│
+├── 📂 web_tests/
+│   ├── pages/
+│   │   ├── login_page.py        # POM → tela de login
+│   │   ├── inventory_page.py    # POM → catálogo de produtos
+│   │   ├── cart_page.py         # POM → carrinho de compras
+│   │   └── checkout_page.py     # POM → fluxo de checkout
+│   ├── tests/
+│   │   └── test_e2e_purchase.py # Fluxo E2E completo de compra
 │   └── conftest.py              # Fixture do WebDriver (Chrome headless)
 │
-├── .github/
-│   └── workflows/
-│       ├── api-tests.yml        # Pipeline CI para testes de API
-│       └── web-tests.yml        # Pipeline CI para testes Web
+├── 📂 .github/workflows/
+│   ├── api-tests.yml            # Pipeline CI → API
+│   └── web-tests.yml            # Pipeline CI → Web
 │
-├── requirements.txt
-└── README.md
+├── 📂 reports/
+│   ├── api-report.html          # Relatório HTML → API
+│   └── web-report.html          # Relatório HTML → Web
+│
+├── reporter.py                  # Plugin customizado de relatório HTML
+└── requirements.txt
 ```
 
 ---
 
-## Como Instalar
+## 🛠️ Tecnologias
 
-1. Clone o repositório e entre na pasta:
+| Tecnologia | Versão | Uso |
+|-----------|--------|-----|
+| Python | 3.11 | Linguagem principal |
+| pytest | 8.3.5 | Runner e framework de asserções |
+| requests | 2.32.3 | Cliente HTTP para testes de API |
+| Selenium | 4.27.1 | Automação de browser (E2E) |
+| pytest-html | 4.1.1 | Geração de relatórios HTML |
+| GitHub Actions | — | Pipeline de CI/CD |
+| Chrome (headless) | latest | Browser para testes Web em CI |
+
+> O **Selenium 4.6+** inclui o `selenium-manager` embutido, que gerencia o ChromeDriver automaticamente — sem dependências extras.
+
+---
+
+## ⚙️ Como Instalar
+
+**Pré-requisitos:** Python 3.11+, Git e Google Chrome instalado.
 
 ```bash
-git clone https://github.com/seu-usuario/Teste-Qualidade-CICD.git
+# 1. Clone o repositório
+git clone https://github.com/WarneyRego/Teste-Qualidade-CICD.git
 cd Teste-Qualidade-CICD
-```
 
-2. Crie e ative um ambiente virtual:
-
-```bash
+# 2. Crie e ative um ambiente virtual
 python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-.venv\Scripts\activate      # Windows
-```
+source .venv/bin/activate      # Linux/macOS
+.venv\Scripts\activate         # Windows
 
-3. Instale as dependências:
-
-```bash
+# 3. Instale as dependências
 pip install -r requirements.txt
 ```
 
 ---
 
-## Como Executar
+## ▶️ Como Executar
 
-### Testes de API
+### 🔌 Testes de API
 
 ```bash
-pytest api_tests/ -v --html=reports/api-report.html --self-contained-html
+# Roda toda a suíte
+PYTHONPATH=. pytest api_tests/ -v
+
+# Roda por módulo
+PYTHONPATH=. pytest api_tests/tests/test_pet.py -v
+PYTHONPATH=. pytest api_tests/tests/test_store.py -v
+PYTHONPATH=. pytest api_tests/tests/test_user.py -v
+
+# Com relatório HTML customizado
+PYTHONPATH=. pytest api_tests/ -v -p reporter --custom-html=reports/api-report.html
 ```
 
-### Testes Web
+### 🌐 Testes Web
 
 ```bash
-pytest web_tests/ -v --html=reports/web-report.html --self-contained-html
-```
+# Roda o fluxo E2E completo
+PYTHONPATH=. pytest web_tests/ -v
 
-Os relatórios HTML ficam salvos na pasta `reports/` após cada execução.
-
-Para rodar uma suíte específica de testes de API:
-
-```bash
-pytest api_tests/tests/test_pet.py -v
-pytest api_tests/tests/test_store.py -v
-pytest api_tests/tests/test_user.py -v
+# Com relatório HTML customizado
+PYTHONPATH=. pytest web_tests/ -v -p reporter --custom-html=reports/web-report.html
 ```
 
 ---
 
-## CI/CD
+## 📊 Relatórios HTML
 
-O projeto possui dois workflows no GitHub Actions, acionados em todo **push** ou **pull request** para a branch `main`.
+Os testes geram relatórios HTML detalhados na pasta `reports/`, com status de cada teste, logs e duração.
 
-### api-tests.yml
+### Visualizar os relatórios
 
-1. Configura o Python 3.11 no runner Ubuntu.
-2. Instala as dependências do `requirements.txt`.
-3. Executa `pytest api_tests/` com saída verbosa e geração de relatório HTML.
-4. Faz upload do relatório como artefato no GitHub Actions.
+> **O GitHub não renderiza arquivos `.html` diretamente no repositório — mas você pode visualizá-los de duas formas:**
 
-### web-tests.yml
+**1. 🌐 Via htmlpreview (sem instalar nada):**
 
-1. Configura o Python 3.11 no runner Ubuntu.
-2. Instala o **Google Chrome** via repositório oficial.
-3. Instala as dependências do `requirements.txt` (o `webdriver-manager` baixa o ChromeDriver compatível automaticamente).
-4. Executa `pytest web_tests/` em modo headless — sem necessidade de display gráfico.
-5. Faz upload do relatório HTML como artefato.
+| Relatório | Link |
+|-----------|------|
+| API Tests | [▶ Abrir relatório API](https://htmlpreview.github.io/?https://raw.githubusercontent.com/WarneyRego/Teste-Qualidade-CICD/main/reports/api-report.html) |
+| Web Tests | [▶ Abrir relatório Web](https://htmlpreview.github.io/?https://raw.githubusercontent.com/WarneyRego/Teste-Qualidade-CICD/main/reports/web-report.html) |
 
-Os artefatos ficam disponíveis na aba **Actions** do repositório GitHub, dentro de cada execução de workflow.
+**2. 📦 Via artefatos do GitHub Actions:**
+
+Cada execução da pipeline faz upload do relatório como artefato. Para acessar:
+1. Vá em **Actions** no repositório
+2. Clique na execução desejada
+3. Baixe o artefato `api-test-report` ou `web-test-report`
 
 ---
 
-## Prints
+## 🔄 CI/CD — GitHub Actions
 
-Os prints das execuções dos testes (locais e CI) estão disponíveis no repositório, na pasta `prints/` (a ser adicionada conforme execuções forem realizadas).
+O projeto possui **dois workflows independentes**, disparados automaticamente em todo `push` ou `pull request` para a branch `main`.
+
+### `api-tests.yml`
+
+```
+Push/PR → main
+    └── api-tests (ubuntu-latest)
+            ├── Checkout do repositório
+            ├── Setup Python 3.11
+            ├── pip install -r requirements.txt
+            ├── pytest api_tests/ → relatório HTML
+            └── Upload do relatório como artefato
+```
+
+### `web-tests.yml`
+
+```
+Push/PR → main
+    └── web-tests (ubuntu-latest)
+            ├── Checkout do repositório
+            ├── Setup Python 3.11
+            ├── Instala Chrome (browser-actions/setup-chrome)
+            ├── pip install -r requirements.txt
+            ├── pytest web_tests/ em modo --headless=new
+            └── Upload do relatório como artefato
+```
+
+---
+
+## 🧩 Padrões de Design
+
+### Service Object (API)
+Cada recurso da API (`Pet`, `Store`, `User`) é encapsulado em uma classe de serviço que centraliza todas as chamadas HTTP. Os testes consomem apenas esses serviços, sem URLs ou headers espalhados pelo código.
+
+### Page Object Model (Web)
+Cada tela da aplicação SauceDemo é representada por uma classe (`LoginPage`, `InventoryPage`, `CartPage`, `CheckoutPage`). Os seletores e as interações ficam dentro de cada Page Object — os testes descrevem apenas o fluxo de negócio, sem manipular o DOM diretamente.
+
+---
+
+## 📌 Decisões Técnicas
+
+- **`selenium-manager`** (embutido no Selenium 4.6+) substitui o `webdriver-manager`, eliminando falhas de rate limit no CI.
+- **`--headless=new`** é usado em CI pois o modo `--headless` legado tem comportamento inconsistente no Chrome 112+.
+- **`form.requestSubmit()`** é usado para submeter o formulário de checkout — garante que os event listeners do JavaScript disparem corretamente em ambientes headless Linux.
+- **`HTMLInputElement.value` setter nativo** é usado para preencher campos React, garantindo que o estado interno da lib atualize corretamente.
+
+---
+
+<div align="center">
+
+Feito com 🧠 e ☕ · [Warney Rego](https://github.com/WarneyRego)
+
+</div>
