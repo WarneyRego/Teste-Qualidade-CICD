@@ -42,7 +42,8 @@ class CheckoutPage:
         return self.wait.until(EC.presence_of_element_located(self._ITEM_TOTAL_LABEL)).text
 
     def finish_order(self):
-        self.wait.until(EC.element_to_be_clickable(self._FINISH_BTN)).click()
+        btn = self.wait.until(EC.element_to_be_clickable(self._FINISH_BTN))
+        self.driver.execute_script("arguments[0].click();", btn)
         self.wait.until(EC.presence_of_element_located(self._CONFIRMATION_HEADER))
 
     def get_confirmation_header(self) -> str:
