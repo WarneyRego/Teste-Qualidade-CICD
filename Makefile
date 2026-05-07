@@ -1,10 +1,10 @@
 REPO = WarneyRego/Teste-Qualidade-CICD
 
 test-api:
-	PYTHONPATH=. pytest api_tests/ -v -p reporter --custom-html=reports/api-report.html --custom-html-title="API Tests — Petstore"
+	PYTHONPATH=. python3 -m pytest api_tests/ -v -p reporter --custom-html=reports/api-report.html --custom-html-title="API Tests — Petstore"
 
 test-web:
-	PYTHONPATH=. pytest web_tests/ -v -p reporter --custom-html=reports/web-report.html --custom-html-title="Web Tests — SauceDemo"
+	PYTHONPATH=. python3 -m pytest web_tests/ -v -p reporter --custom-html=reports/web-report.html --custom-html-title="Web Tests — SauceDemo"
 
 test-all: test-api test-web
 
