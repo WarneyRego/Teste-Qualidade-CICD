@@ -157,8 +157,8 @@ Os testes geram relatórios HTML detalhados na pasta `reports/`, com status de c
 
 | Relatório | Link |
 |-----------|------|
-| API Tests | [▶ Abrir relatório API](https://htmlpreview.github.io/?https://raw.githubusercontent.com/WarneyRego/Teste-Qualidade-CICD/main/reports/api-report.html) |
-| Web Tests | [▶ Abrir relatório Web](https://htmlpreview.github.io/?https://raw.githubusercontent.com/WarneyRego/Teste-Qualidade-CICD/main/reports/web-report.html) |
+| API Tests | [▶ Abrir relatório API](https://raw.githack.com/WarneyRego/Teste-Qualidade-CICD/main/reports/api-report.html) |
+| Web Tests | [▶ Abrir relatório Web](https://raw.githack.com/WarneyRego/Teste-Qualidade-CICD/main/reports/web-report.html) |
 
 **2. 📦 Via artefatos do GitHub Actions:**
 
